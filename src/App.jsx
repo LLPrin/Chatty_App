@@ -15,7 +15,7 @@ class App extends Component {
   constructor(props){
     super(props);
      this.state = {
-      currentUser: { name: "Priscilla" },
+      currentUser: { name: "Guest" },
       messages: [],
       usersOnline: 0
 
@@ -62,14 +62,9 @@ class App extends Component {
   // Called any time the props or state changes. The jsx elements returned in this
   // method are rendered in the DOM.
 
-
   componentDidMount() {
     // console.log("componentDidMount <App />")
     this.socket = new WebSocket ('ws://localhost:4000/')
-    // const wsConn = this.socket;
-    // console.log('das state', this.state);
-    // const { currentUser } = this.state;
-    // console.log('here is currentuser on connection', currentUser);
     this.socket.onopen = (event) => {
       console.log("Connected to Server.");
     }

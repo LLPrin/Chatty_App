@@ -21,43 +21,50 @@ const server = express()
 // Create the WebSockets server
 const wss = new SocketServer({ server });
 
-// Broadcast to all.
+// Broadcast to all clients.
 wss.broadcast = function broadcast(data) {
   wss.clients.forEach(function each(client) {
     client.send(data);
   });
 };
+
+function updateUserCount() {
+  // console.log('Update User Count');
+  wss.broadcast(JSON.stringify({ userCount: wss.clients.length }));
+}
+
 // Set up a callback that will run when a client connects to the server
 // When a client connects they are assigned a socket, represented by
 // the ws parameter in the callback.
 wss.on('connection', (ws) => {
-  console.log('Client connected');
+  // console.log('Client connected');
+  updateUserCount();
 
   ws.on('message', function incoming(message) {
     const msg = JSON.parse(message);
-    console.log('received: ', msg);
+    // console.log('MMMMMMMMessage!!!!: ', msg);
     const { type, content, user1 } = msg;
 
     if (type === 'NAME_UPDATE') {
-      console.log('lets update name to', content);
+      // console.log('NNNNName-change!: ', content);
       const postNotification = { type: 'incomingNotification'}
+      //Give it a yooooneeeq aaayyyydeeee
       postNotification.id = uuid.v1()
       postNotification.content = content
-
       wss.broadcast(JSON.stringify(postNotification));
     }
 
     if (type === 'NEW_USER') {
-      console.log("A new user just connected. Here is the user info", msg.currentUser);
+      // console.log("A wild new user has appeared!! User info: ", msg.currentUser);
       const { currentUser } = msg;
-      // connectedUserList.push(currentUser);
-      console.log('here is my usersList on server', currentUser);
+      // console.log('Server Userlist', currentUser);
     }
 
     if (type === 'postMessage') {
       var receivedMessage = JSON.parse(message);
       // console.log(receivedMessage)
       var outgoingMessage = {type: 'incomingMessage'}
+      //Give it a yooooneeeq aaayyyydeeee
       outgoingMessage.id = uuid.v1()
       outgoingMessage.username = receivedMessage.username
       outgoingMessage.content = receivedMessage.content
@@ -66,6 +73,11 @@ wss.on('connection', (ws) => {
     }
   })
 
-  // Set up a callback for when a client closes the socket. This usually means they closed their browser.
-  ws.on('close', () => console.log('Client disconnected'));
+  //Need Callback for when user closes socket aka closes browser.
+   ws.on('close', () => {
+    // console.log('Client Disconnected')
+    updateUserCount();
+    // console.log('Server Userlist: ', connectedUserList.length)
+  });
+
 });
