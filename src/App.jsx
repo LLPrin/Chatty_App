@@ -1,3 +1,4 @@
+// Hello!
 import React, {Component} from 'react';
 import MessageList from './MessageList.jsx';
 import ChatBar from './ChatBar.jsx';
